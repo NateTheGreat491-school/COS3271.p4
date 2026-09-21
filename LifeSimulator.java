@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2026 Nathan William Barros. All rights reserved.
  *
- * Licensed under the MIT Licesnse (the "License");
+ * Licensed under the MIT License (the "License");
  * you may not use this file except in compliance with the License.
- * you may obtain a copy of the License at
+ * You may obtain a copy of the License at
  *
  *    https://opensource.org/licenses/MIT
  *    OR
@@ -11,228 +11,213 @@
  */
 
 /**
- * Assignment 4a: Person Info App
+ * Assignment 4a: Standalone Person Info App
  *
  * @author Nathan W. Barros (nwbarros@students.unwsp.edu)
  * @course COS 3271
- * @version 1.0.0
+ * @version 1.1.0
  */
-
 package COS3271.p4;
 
 import java.util.Scanner;
-import java.util.InputMismatchException;
-import java.util.Arrays;
 
 public class LifeSimulator {
 
-	/* 
-	 * Creates a Person then displays their bio 
+    private static final String ESCAPE = "q";
+	
+	/*
+	 * Prompts user to create a person then displays their bio
 	 */
-	public static void main(String[] args) {
+    public static void main(String[] args) {
+        Utility.showBanner("q=quit");
 
-		Person p1 = Person();
-		p1.createByUser();
-		p1.showBioTable(p1, true);
+        Person p1 = Person.createByUser(ESCAPE);
+		System.out.print("\n\n");
+        if (p1 == null) {
+            Utility.handleExit("Goodbye.", 0);
+        }
+        Person.showBioTable(p1, true);
+		System.out.print("\n\n[quit]");
+		String waitForUser = new Scanner(System.in).nextLine();
 
-	}	
-
+        Utility.handleExit("Goodbye.", 0);
+    }
 }
 
-private class Person {
-	public static int    MAX_AGE    = 125; // oldest person in history was 122 yr
-	public static double MAX_WEIGHT = 700; // heaviest person in history was 668 kg
-	public static double MAX_HEIGHT = 300; // tallest person in history was 272 cm
+class Person {
+    public static final int      MAX_AGE    = 125;	  // historical record: 122 yr
+    public static final double   MAX_WEIGHT = 700.0;  // historical record: 668 kg
+    public static final double   MAX_HEIGHT = 300.0;  // historical record: 272 cm
+	public static final String[] GENDERS    = {"male", "female"};
 
-	private final String this.gender;
-	private String this.firstName;
-	private String this.lastName;
-	private String this.religion;
-	private double this.weight;
-	private double this.height;
-	private int this.age;
-	
-	public Person();
-	public Person(
-			String firsName, String lastName, String gender,
-			String religion, double weight, double height, int age) {
+    private String  firstName;
+    private String  lastName;
+    private String  gender;
+    private String  religion;
+    private Integer age;
+    private Double  weight;
+    private Double  height;
 
-				gender = gender.toLower();
-				if (weight < 0 || weight > Person.MAX_WEIGHT) {
-					throw new IllegalArgumentException(
-							"Weight must be between 0 and "+ Person.MAX_WEIGHT + " kg");
-				} else if (height < 0 || height > Person.MAX_HEIGHT) {
-					throw new IllegalArgumentException(
-							"Height must be between 0 and "+ Person.MAX_HEIGHT +" cm");
-				} else if !(gender.equals("male") || gender.equals("female")) {
-					throw new IllegalArgumentException(
-							"Gender must be male or female");
-				}
-
-				this.firstName = firstName;
-				this.lastName  = lastName;
-				this.religion  = religion;
-				this.gender = gender;
-				this.weight = weight;
-				this.height = height;
-			}
-	
-	/*
-	 * Prompts the user to enter attributes for a person.
+    /** Factory method that gathers all attributes from the user. 
 	 *
-	 * @return Person obj with filled attributes
-	 */ 
-	public static Person createByUser() {
-		
-		Person p = Person();
-	
-		System.out.print("Please create your person...\n");
-		
-		Utility.queryUser("First Name: ", null)
-		p.firstName = userin.nextLine();
-		
-		Utility.queryUser("Last Name: ", null);
-		p.lastName  = userin.nextLine();
+	 * @param escapeStr - If user input = escapeStr, return null
+	 * @return Person() || null
+	 * */
+    public static Person createByUser(String escapeStr) {
+        System.out.println("Please create your person...");
 
-		Utility.queryUser("Gender", {"male", "female"});
-		p.gender    = userin.nextLine();
+        Person p = new Person();
 
-		Utility.queryUser("Religion: ", null);
-		p.religion  = userin.nextLine();
+        p.firstName = Utility.queryUser("First Name: ", null, escapeStr);
+        if (p.firstName == null) return null;
 
-		Utility.getDoubleFromRange("Weight (kg): ", 0, Person.MAX_WEIGHT);
-		p.weight    = userin.nextDouble();
+        p.lastName = Utility.queryUser("Last Name: ", null, escapeStr);
+        if (p.lastName == null) return null;
 
-		Utility.getDoubleFromRange("Height (cm): ", 0, Person.MAX_HEIGHT);
-		p.height    = userin.nextDouble();
+        p.gender = Utility.queryUser("Gender: ", GENDERS, escapeStr);
+        if (p.gender == null) return null;
 
-		Utility.getIntFromRange("Age (yr): ", 0, Person.MAX_AGE); 
-		p.age       = userin.nextInt();
+        p.age = Utility.getIntFromRange("Age (yr): ", 0, MAX_AGE, escapeStr);
+        if (p.age == null) return null;
 
-		return p;
-	}
+        p.weight = Utility.getDoubleFromRange("Weight (kg): ", 0.0, MAX_WEIGHT, escapeStr);
+        if (p.weight == null) return null;
 
-	/*
-	 * Displays Person.attribs as a table row with or without a header.
-	 *
-	 * @param p          - Person obj
-	 * @param showHeader - include header to table (T/F)
-	 */
-	public static void showBioTable(Person p, boolean showHeader) {
-		
-		String header = "";
+        p.height = Utility.getDoubleFromRange("Height (cm): ", 0.0, MAX_HEIGHT, escapeStr);
+        if (p.height == null) return null;
+
+        p.religion = Utility.queryUser("Religion: ", null, escapeStr);
+        if (p.religion == null) return null;
+
+        return p;
+    }
+
+    /** Prints a simple formatted table (with optional header). */
+    public static void showBioTable(Person p, boolean showHeader) {
+		String seperator = "+----------------------+--------+-----+----------+----------+----------------------+\n";
 
 		if (showHeader) {
-			header += "| %-41s | %-6s | %-3s | %-6s | %-6s | %-20s |\n".formatted(
-						"Full Name", "Gender", "Age", "Weight", "Height", "Religion");
-			header += "\n----------------------------------------------------------------------\n"; 
-		}
+			System.out.printf(
+					"| %-20s | %-6s | %-3s | %-8s | %-8s | %-20s |%n" + seperator,
+					"Full Name", "Gender", "Age", "Weight", "Height", "Religion");
+        }
 
-		System.out.printf(
-				header +
-				"| %-20s %-20s | %-6s | %-3d | %-6.2f | %-6.2f | %-20s |\n"+
-				"----------------------------------------------------------------------\n", 
-				p.firstName, p.lastName, p.gender,
-				p.age, p.weight, p.height, p.religion);
-
-
-	}
-	
+		System.out.printf("| %-20s | %-6s | %-3d | %-8.2f | %-8.2f | %-20s |%n" + seperator,
+                          p.firstName + " " + p.lastName,
+                          p.gender, p.age, p.weight, p.height, p.religion);
+    }
 }
 
-private class Utiliy {
-	static Scanner userin = new Scanner(System.in);
-
-	/*
-	 * Query the user for given prompt for 3 attempts then return or exit(0);
-	 *
-	 * @param prompt - str printed to Sys.out to ask the user for input
-	 * @param tests  - str[] of strings to test response equality with. 
-	 *				   if "test[0]" equals "response" then is valid response.
-	 * @return String response to given prompt / aligned with tests
-	 */
-	public static String queryUser(String prompt, String[] tests) {
-		String response;
-		
-		for (int attempts=3; attempts > 0; attempts--) {
-			System.out.print(prompt);
-			String response = userin.nextLine();
-
-			if ( testResponse(response, tests) ) {
-				System.out.println();
-				return response;
-			}
-
-			System.out.print("----- response not in " + Arrays.toString(tests) + " -----\n");
-		}
-
-		handleExit("Exceeded allocated attempts."); 
-		}
-	}
+class Utility {
+    private static final Scanner userin = new Scanner(System.in);
+    private static final int ATTEMPTS = 3;
 	
+	public static final String CLRSCR = "\033[2J\033[1;1H";
 
-	/* 
-	 * Gives user 3 attempts to select an int for a range
+    public static void showBanner(String msg) {
+		System.out.print(
+				CLRSCR + 
+				"======================================================================\n"+
+				"                       L.I.F.E  S.I.M.U.L.A.T.O.R                     \n"+
+				"======================================================================\n"+
+				msg + "\n\n");
+    }
+
+    /** Returns the accepted string, or null if the user types the escapeStr. 
 	 *
-	 * @param prompt - str printed to Sys.out to ask user for int
-	 */ 
-	public static int getIntFromRange(String prompt, int min, int max) {
-		
-		for (int attempts=3; attempts > 0; attempts--) {
-			System.out.print(prompt);
-
-			try {
-				int response = userin.nextInt();
-			} catch (InputMismatchException e) {
-				System.out.print("----- invalid int -----\n");
-				continue;
-			}
-
-			if (response < min || response > max) {
-				System.out.printf("----- Range %d to %d -----", min, max);
-				continue;
-			}
-			return response;
-		}
-
-		handleExit("Exceeded allocated attempts.");
-	}
-
-	/*
-	 * Gives user 3 attempts to select a double for a range.
+	 * @param prompt    - prompt shown to the user
+	 * @param allowed   - array of accepted input str
+	 * @param escapeStr - return null on this str
 	 *
-	 * @param prompt - str printed to Sys.out to ask user for int
-	 */ 
-	public static double getDoubleFromRange(String prompt, double min, double max) {
-		
-		for (int attempts=3; attempts > 0; attempts--) {
-			System.out.print(prompt);
+	 * @return String || null
+	 * */
+    public static String queryUser(String prompt, String[] allowed, String escapeStr) {
 
-			try {
-				double response = uersin.nextDouble();
-			} catch (InputMismatchException e) {
-				System.out.print("----- invalid doube -----\n");
-				continue;
+        for (int i = 0; i < ATTEMPTS; i++) {
+            System.out.print(prompt);
+            String response = userin.nextLine();
+
+            if (escapeStr.equalsIgnoreCase(response))   return null;
+
+			// accept any response
+            if (allowed == null && !response.isEmpty()) return response;
+			
+			// check for accepted responses
+			for (String word : allowed) {
+				if (word.equalsIgnoreCase(response)) return word;
 			}
 
-			if (response < min || response > max) {
-				System.out.print("----- range %f to %f -----", min, max);
-				continue;
-			}
-			return response;
-		}
+            System.out.print("----- response must be in [" + String.join(", ", allowed) + "] -----\n");
+        }
 
-		handleExit("Exceeded allocated attempts.");
-	}
-	
-	public static boolean testResponse(String response, String[] tests) {
-		if (tests = null) return true;
+        handleExit("Exceeded allocated attempts.", 0);
+        return null; // included to prevent static analyzer warnings
+    }
 
-		for (int i=0; i<tests.length; i++) {
-			if (test[i].equals( response.toLower() )) return true;
-		}
-		return false;
-	}
+    /** Returns the accepted integer, or null if the user types the escapeStr. 
+	 *
+	 * @param prompt    - prompt shown to the user
+	 * @param min       - minimum integer accepted
+	 * @param max       - maximum integer accepted
+	 * @param escapeStr - return null on this str
+	 * 
+	 * @return Integer || null
+	 * */
+    public static Integer getIntFromRange(String prompt, int min, int max, String escapeStr) {
+
+        for (int i = 0; i < ATTEMPTS; i++) {
+            System.out.print(prompt);
+            String tmpStr = userin.nextLine();
+
+            if (escapeStr.equalsIgnoreCase(tmpStr)) return null;
+			
+            try {
+                Integer value = Integer.parseInt(tmpStr);
+				if (value >= min && value <= max) return value;
+            } catch (NumberFormatException e) {
+                System.out.print("----- invalid integer -----\n");
+            }
+
+            System.out.printf("----- range %d to %d -----\n", min, max);
+        }
+
+        handleExit("Exceeded allocated attempts.", 0);
+        return null; // unreachable
+    }
+
+    /** Returns the accepted double, or null if the user typed the escapeStr.
+	 *
+	 * @param prompt    - prompt shown to the user
+	 * @param min       - minimum float value
+	 * @param max       - maximum float value
+	 * @param escapeStr - return null on this str
+	 *
+	 * @return Double || null
+	 **/
+    public static Double getDoubleFromRange(String prompt, double min, double max, String escapeStr) {
+
+        for (int i = 0; i < ATTEMPTS; i++) {
+            System.out.print(prompt);
+            String tmpStr = userin.nextLine();
+
+            if (escapeStr.equalsIgnoreCase(tmpStr)) return null;
+
+            try {
+                Double value = Double.parseDouble(tmpStr);
+				if (value >= min && value <= max) return value;
+            } catch (NumberFormatException e) {
+                System.out.print("----- invalid number -----\n");
+            }
+
+			System.out.printf("----- range %.1f to %.1f -----\n", min, max);
+        }
+
+        handleExit("Exceeded allocated attempts.", 0);
+        return null; // unreachable
+    }
+
+    public static void handleExit(String msg, int code) {
+		System.out.println(CLRSCR + msg);
+        System.exit(code);
+    }
 }
-
-// EOF
