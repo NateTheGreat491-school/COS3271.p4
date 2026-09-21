@@ -1,67 +1,156 @@
-/* File:	Person Info App
- * Devs:	Nathan W. Barros
- * Origin:	2026-09-21 08:15:32
- * Edited:	2026-09-21 08:15:49
+/*
+ * Copyright (c) 2026 Nathan William Barros. All rights reserved.
+ *
+ * Licensed under the MIT Licesnse (the "License");
+ * you may not use this file except in compliance with the License.
+ * you may obtain a copy of the License at
+ *
+ *    https://opensource.org/licenses/MIT
+ *    OR
+ *    see repo LICENSE
  */
+
+/**
+ * Assignment 4a: Person Info App
+ *
+ * @author Nathan W. Barros (nwbarros@students.unwsp.edu)
+ * @course COS 3271
+ * @version 1.0.0
+ */
+
+package COS3271.p4;
 
 import java.util.Scanner;
 import java.util.InputMismatchException;
+import java.util.Arrays;
 
 public class LifeSimulator {
 
-public static void main(String[] args) {
+	/* 
+	 * Creates a Person then displays their bio 
+	 */
+	public static void main(String[] args) {
 
+		Person p1 = Person();
+		p1.createByUser();
+		p1.showBioTable(p1, true);
 
-
-}
+	}	
 
 }
 
 private class Person {
-	final String this.gender;
-	String this.firstName;
-	String this.lastName;
-	String this.religion;
-	double this.weight;
-	double this.height;
-	int this.age;
+	public static int    MAX_AGE    = 125; // oldest person in history was 122 yr
+	public static double MAX_WEIGHT = 700; // heaviest person in history was 668 kg
+	public static double MAX_HEIGHT = 300; // tallest person in history was 272 cm
 
-	static Scanner userin = new Scanner(System.in);
+	private final String this.gender;
+	private String this.firstName;
+	private String this.lastName;
+	private String this.religion;
+	private double this.weight;
+	private double this.height;
+	private int this.age;
+	
+	public Person();
+	public Person(
+			String firsName, String lastName, String gender,
+			String religion, double weight, double height, int age) {
 
+				gender = gender.toLower();
+				if (weight < 0 || weight > Person.MAX_WEIGHT) {
+					throw new IllegalArgumentException(
+							"Weight must be between 0 and "+ Person.MAX_WEIGHT + " kg");
+				} else if (height < 0 || height > Person.MAX_HEIGHT) {
+					throw new IllegalArgumentException(
+							"Height must be between 0 and "+ Person.MAX_HEIGHT +" cm");
+				} else if !(gender.equals("male") || gender.equals("female")) {
+					throw new IllegalArgumentException(
+							"Gender must be male or female");
+				}
+
+				this.firstName = firstName;
+				this.lastName  = lastName;
+				this.religion  = religion;
+				this.gender = gender;
+				this.weight = weight;
+				this.height = height;
+			}
+	
+	/*
+	 * Prompts the user to enter attributes for a person.
+	 *
+	 * @return Person obj with filled attributes
+	 */ 
 	public static Person createByUser() {
 		
 		Person p = Person();
 	
 		System.out.print("Please create your person...\n");
 		
-		queryUser("First Name: ", null)
+		Utility.queryUser("First Name: ", null)
 		p.firstName = userin.nextLine();
 		
-		queryUser("Last Name: ", null);
+		Utility.queryUser("Last Name: ", null);
 		p.lastName  = userin.nextLine();
 
-		queryUser("Gender", {"male", "female"});
+		Utility.queryUser("Gender", {"male", "female"});
 		p.gender    = userin.nextLine();
 
-		queryUser("Religion: ", null);
+		Utility.queryUser("Religion: ", null);
 		p.religion  = userin.nextLine();
 
-		getDouble("Weight (kg): ", 0, 700); // heaviest person in history 662 kg
+		Utility.getDoubleFromRange("Weight (kg): ", 0, Person.MAX_WEIGHT);
 		p.weight    = userin.nextDouble();
 
-		getDouble("Height (cm): ", 0, 300); // tallest person in history 272 cm
+		Utility.getDoubleFromRange("Height (cm): ", 0, Person.MAX_HEIGHT);
 		p.height    = userin.nextDouble();
 
-		getInt("Age (yr): ", 0, 125); // older person (nobbiblical) 122 yr 164 d
+		Utility.getIntFromRange("Age (yr): ", 0, Person.MAX_AGE); 
 		p.age       = userin.nextInt();
 
 		return p;
 	}
+
+	/*
+	 * Displays Person.attribs as a table row with or without a header.
+	 *
+	 * @param p          - Person obj
+	 * @param showHeader - include header to table (T/F)
+	 */
+	public static void showBioTable(Person p, boolean showHeader) {
+		
+		String header = "";
+
+		if (showHeader) {
+			header += "| %-41s | %-6s | %-3s | %-6s | %-6s | %-20s |\n".formatted(
+						"Full Name", "Gender", "Age", "Weight", "Height", "Religion");
+			header += "\n----------------------------------------------------------------------\n"; 
+		}
+
+		System.out.printf(
+				header +
+				"| %-20s %-20s | %-6s | %-3d | %-6.2f | %-6.2f | %-20s |\n"+
+				"----------------------------------------------------------------------\n", 
+				p.firstName, p.lastName, p.gender,
+				p.age, p.weight, p.height, p.religion);
+
+
+	}
 	
 }
 
-private class Helper {
+private class Utiliy {
+	static Scanner userin = new Scanner(System.in);
 
+	/*
+	 * Query the user for given prompt for 3 attempts then return or exit(0);
+	 *
+	 * @param prompt - str printed to Sys.out to ask the user for input
+	 * @param tests  - str[] of strings to test response equality with. 
+	 *				   if "test[0]" equals "response" then is valid response.
+	 * @return String response to given prompt / aligned with tests
+	 */
 	public static String queryUser(String prompt, String[] tests) {
 		String response;
 		
@@ -69,17 +158,25 @@ private class Helper {
 			System.out.print(prompt);
 			String response = userin.nextLine();
 
-			if ( checkResponse(response, tests) ) {
+			if ( testResponse(response, tests) ) {
 				System.out.println();
 				return response;
 			}
+
+			System.out.print("----- response not in " + Arrays.toString(tests) + " -----\n");
 		}
 
 		handleExit("Exceeded allocated attempts."); 
 		}
 	}
+	
 
-	public static int getInt(String prompt, int min, int max) {
+	/* 
+	 * Gives user 3 attempts to select an int for a range
+	 *
+	 * @param prompt - str printed to Sys.out to ask user for int
+	 */ 
+	public static int getIntFromRange(String prompt, int min, int max) {
 		
 		for (int attempts=3; attempts > 0; attempts--) {
 			System.out.print(prompt);
@@ -101,7 +198,12 @@ private class Helper {
 		handleExit("Exceeded allocated attempts.");
 	}
 
-	public static double getDouble(String prompt, double min, double max) {
+	/*
+	 * Gives user 3 attempts to select a double for a range.
+	 *
+	 * @param prompt - str printed to Sys.out to ask user for int
+	 */ 
+	public static double getDoubleFromRange(String prompt, double min, double max) {
 		
 		for (int attempts=3; attempts > 0; attempts--) {
 			System.out.print(prompt);
@@ -122,8 +224,8 @@ private class Helper {
 
 		handleExit("Exceeded allocated attempts.");
 	}
-
-	public static boolean checkResponse(String response, String[] tests) {
+	
+	public static boolean testResponse(String response, String[] tests) {
 		if (tests = null) return true;
 
 		for (int i=0; i<tests.length; i++) {
