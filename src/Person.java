@@ -18,8 +18,6 @@
 * @version 1.0.0
 */
 
-package COS3271.p4;
-
 import java.util.Scanner;
 
 public class Person {

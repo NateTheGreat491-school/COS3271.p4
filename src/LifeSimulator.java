@@ -17,7 +17,6 @@
  * @course COS 3271
  * @version 1.1.0
  */
-package COS3271.p4;
 
 import java.util.Scanner;
 
