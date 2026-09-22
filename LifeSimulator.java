@@ -24,13 +24,14 @@ import java.util.Scanner;
 public class LifeSimulator {
 
 	private static Scanner userin = new Scanner(System.in);
+	private final static String ESCAPE = "q";
 
 	/*
 	 * Prompts user to create a person then displays their bio
 	 */
     public static void main(String[] args) {
 		String response;
-		Person p1 = Person("John", "Doe", "male", "christian", 37, 78.5, 178.5);
+		Person p1 = new Person("John", "Doe", "male", "christian", 37, 78.5, 178.5);
 
 		while (true) {
 			showHome();
@@ -39,9 +40,8 @@ public class LifeSimulator {
 			System.out.print("\n\n");
 
 			switch (response.toLowerCase()) {
-
 				case "v","1" -> Person.showBioTable(p1, true);
-				case "c","2" -> p1 = Person.createByUser();
+				case "c","2" -> p1 = Person.createByUser(ESCAPE);
 				case "g","3" -> p1.greet();
 				case "p","4" -> p1.pray();
 				case "f","5" -> p1.eat( getFood() );
@@ -50,8 +50,6 @@ public class LifeSimulator {
 				default -> {System.out.print("----- invalid selection -----\n[continue]"); userin.nextLine();}
 			}
 		}
-
-		Utility.handleExit("Goodbye.", 0);
     }
 
 	private static String getFood() {
