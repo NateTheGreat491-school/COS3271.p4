@@ -34,6 +34,17 @@ public class Person {
 	private Double  weight;
 	private Double  height;
 
+	Person(String firstName, String lastName, String gender, 
+		   String religion, Integer age, Double weight, Double height) {
+		this.firstName = firstName;
+		this.lastName  = lastName;
+		this.gender    = gender;
+		this.religion  = religion;
+		this.age       = age;
+		this.weight    = weight;
+		this.height    = height;
+	}
+
 	/** Factory method that gathers all attributes from the user.
 	*
 	* @param escapeStr - If user input = escapeStr, return null
@@ -84,7 +95,7 @@ public class Person {
 	}
 
 	public String greet() {
-		return "Hello, my name is "+ this.firstName + this.lastName +". Nice to meet you!";
+		return "Hello, my name is "+ this.getName() +". Nice to meet you!";
 	}
 
 	public static String pray() {
