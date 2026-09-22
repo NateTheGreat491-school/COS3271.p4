@@ -82,15 +82,15 @@ public class Person {
 
 	/** Prints a simple formatted table (with optional header). */
 	public static void showBioTable(Person p, boolean showHeader) {
-		String seperator = "+----------------------+--------+-----+----------+----------+----------------------+\n";
+		String seperator = "+----------------------+--------+-----+----------+----------+-------------------------+\n";
 
 		if (showHeader) {
 		System.out.printf(
-			  "| %-20s | %-6s | %-3s | %-8s | %-8s | %-20s |%n" + seperator,
-			  "Full Name", "Gender", "Age", "Weight", "Height", "Religion");
+			  "| %-20s | %-6s | %-3s | %-12s | %-12s | %-15s |%n" + seperator,
+			  "Full Name", "Gender", "Age", "Weight (kg)", "Height (cm)", "Religion");
 		}
 
-		System.out.printf("| %-20s | %-6s | %-3d | %-8.2f | %-8.2f | %-20s |%n" + seperator,
+		System.out.printf("| %-20s | %-6s | %-3d | %-12.2f | %-12.2f | %-15s |%n" + seperator,
 					p.firstName + " " + p.lastName,
 					p.gender, p.age, p.weight, p.height, p.religion);
 	}
@@ -146,7 +146,7 @@ public class Person {
 					"    Get me an introduction.";
 
 			default -> prayer =
-				"A Prayer for Peace:"+
+				"A Prayer for Peace:\n"+
 				"    In moments of turmoil, may I find a quiet place within myself.\n"+
 				"    Let my mind be still and my heart be at peace, no matter\n"+
 				"    the external circumstances. In the stillnes, may I find the\n"+
