@@ -40,7 +40,7 @@ public class LifeSimulator {
 				
 			switch (response.toLowerCase()) {
 				case "v","1" -> Person.showBioTable(p1, true);
-				case "c","2" -> { p1 = Person.createByUser(ESCAPE); continue; }
+				case "c","2" -> { p1 = getNewPerson(p1); continue; }
 				case "g","3" -> System.out.print( p1.greet() + "\n\n");
 				case "p","4" -> System.out.print( p1.pray()  + "\n\n");
 				case "f","5" -> System.out.print( p1.eat( getFood() ) + "\n\n");
@@ -53,6 +53,12 @@ public class LifeSimulator {
 			userin.nextLine();
 		}
     }
+
+	private static Person getNewPerson(Person currentPerson) {
+			Person newPerson = Person.createByUser(ESCAPE);
+			if (newPerson != null) return newPerson;
+			return currentPerson;
+	}
 
 	private static String getFood() {
 		System.out.print("Enter any food: ");
