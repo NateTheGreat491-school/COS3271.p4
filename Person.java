@@ -98,7 +98,7 @@ public class Person {
 		return "Hello, my name is "+ this.getName() +". Nice to meet you!";
 	}
 
-	public static String pray() {
+	public String pray() {
 		String prayer;
 
 		switch (this.religion.toLowerCase()) {
@@ -126,7 +126,7 @@ public class Person {
 					"    and live believing in the equality of all that lives.";
 
 			case "hinduism", "hindu" -> prayer = 
-					"A Hindu's Song: A Prayer of Good Over Evil, Light Over Dark.\n"
+					"A Hindu's Song: A Prayer of Good Over Evil, Light Over Dark.\n"+
 					"    Fill the Heart with the oil of love.\n"+
 					"    Place in it the wick of single-pointed mind.\n"+
 					"    Light it with the Knowledge of Truth and remove\n"+
