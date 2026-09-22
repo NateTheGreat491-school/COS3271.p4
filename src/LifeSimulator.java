@@ -37,17 +37,20 @@ public class LifeSimulator {
 
 			response = userin.nextLine();
 			System.out.print("\n\n");
-
+				
 			switch (response.toLowerCase()) {
 				case "v","1" -> Person.showBioTable(p1, true);
-				case "c","2" -> p1 = Person.createByUser(ESCAPE);
-				case "g","3" -> p1.greet();
-				case "p","4" -> p1.pray();
-				case "f","5" -> p1.eat( getFood() );
-				case "s","6" -> p1.goToSleep();
-				case "e","7" -> p1.changeReligion( getReligion() );
-				default -> {System.out.print("----- invalid selection -----\n[continue]"); userin.nextLine();}
+				case "c","2" -> { p1 = Person.createByUser(ESCAPE); continue; }
+				case "g","3" -> System.out.print( p1.greet() + "\n\n");
+				case "p","4" -> System.out.print( p1.pray()  + "\n\n");
+				case "f","5" -> System.out.print( p1.eat( getFood() ) + "\n\n");
+				case "s","6" -> { p1.goToSleep(); continue; }
+				case "e","7" -> { p1.changeReligion( getReligion() ); continue; }
+				case "q" -> Utility.handleExit("Goodbye.", 0);
+				default -> System.out.print("----- invalid selection -----\n[continue]");
 			}
+
+			userin.nextLine();
 		}
     }
 
@@ -65,7 +68,7 @@ public class LifeSimulator {
 		Utility.showBanner("q=quit");
 		System.out.print(
 				"Options:\n"+
-				"    1. [V]iew Person"+
+				"    1. [V]iew Person\n"+
 				"    2. [C]reate new Person\n"+
 				"    3. [G]reet\n"+
 				"    4. [P]ray\n"+
