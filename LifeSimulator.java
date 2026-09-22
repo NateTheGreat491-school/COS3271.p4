@@ -47,9 +47,7 @@ public class LifeSimulator {
 				case "f","5" -> p1.eat( getFood() );
 				case "s","6" -> p1.goToSleep();
 				case "e","7" -> p1.changeReligion( getReligion() );
-				default -> 
-					System.out.print("----- invalid selection -----\n[continue]");
-					userin.nextLine();
+				default -> {System.out.print("----- invalid selection -----\n[continue]"); userin.nextLine();}
 			}
 		}
 
@@ -66,16 +64,16 @@ public class LifeSimulator {
 		return userin.nextLine();
 	}
 
-	private static showHome() {
+	private static void showHome() {
 		Utility.showBanner("q=quit");
 		System.out.print(
 				"Options:\n"+
-				"    1. [V]iew Person"
+				"    1. [V]iew Person"+
 				"    2. [C]reate new Person\n"+
 				"    3. [G]reet\n"+
 				"    4. [P]ray\n"+
 				"    5. [F]eed\n"+
-				"    6. [S]leep\n+
+				"    6. [S]leep\n"+
 				"    7. [E]dit Religion\n\n"+
 
 				" : ");
