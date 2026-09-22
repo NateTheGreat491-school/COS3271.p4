@@ -20,6 +20,8 @@
 
 package COS3271.p4;
 
+import java.util.Scanner;
+
 public class Person {
 	public static final int      MAX_AGE    = 125;    // historical record: 122 yr
 	public static final double   MAX_WEIGHT = 700.0;  // historical record: 668 kg
@@ -33,7 +35,8 @@ public class Person {
 	private Integer age;
 	private Double  weight;
 	private Double  height;
-
+	
+	Person() {}
 	Person(String firstName, String lastName, String gender, 
 		   String religion, Integer age, Double weight, Double height) {
 		this.firstName = firstName;
